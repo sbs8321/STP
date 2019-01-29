@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Owner">
+
+	<!-- 주차장 owner의 email 찾기 -->
+	<resultMap type="owner" id="owner-resultmap-collection">
+		<result column="EMAIL" property="email" />
+		<result column="PRKPLCENO" property="prkplceno" />
+		<result column="POINT" property="point" />
+		<collection property="parking" ofType="parking">
+			<result column="PRKPLCENO" property="prkplceno" />
+			<result column="PRKPLCENM" property="prkplcenm" />
+
+		</collection>
+	</resultMap>
+	<select id="ownerEmail" parameterType="String"
+		resultMap="owner-resultmap-collection">
+		SELECT *
+		FROM OWNERS O, MEETYOUALL_PARKING_INFO M
+		WHERE O.PRKPLCENO = M.PRKPLCENO
+		AND M.PRKPLCENM = #{parkingName}
+	</select>
+
+	<!-- 포인트 올리기 -->
+	<update id="ownerPointUp" parameterType="owner">
+		UPDATE OWNERS SET POINT=POINT+#{point} WHERE EMAIL=#{email}
+	</update>
+
+	<!-- 기업회원 정보 가져오기 -->
+	<select id="ownerInfo" parameterType="String" resultType="owner">
+		SELECT * FROM OWNERS WHERE EMAIL=#{login}
+	</select>
+
+	<!-- 환전 신청한 owner의 exchange 변경하기 -->
+	<update id="exchangeChange" parameterType="owner">
+		UPDATE OWNERS SET EXCHANGE=#{exchange} WHERE EMAIL=#{email}
+	</update>
+
+	<!-- 환전 신청 승인된 owner 정보 변경(point, balance) -->
+	<update id="exchangeApplyChange" parameterType="owner">
+		UPDATE OWNERS SET POINT = POINT-#{point}, BALANCE= BALANCE+#{balance} WHERE
+		EMAIL=#{email}
+	</update>
+
+	<!-- 환전 신청 승인된 owner 정보 변경(point, balance, exchange) -->
+	<update id="exchangeApplyExchangeChange" parameterType="owner">
+		UPDATE OWNERS SET POINT = POINT-#{point}, BALANCE= BALANCE+#{balance},
+		EXCHANGE=0 WHERE EMAIL=#{email}
+	</update>
+	<!-- admin balance 변경 -->
+	<update id="adminUpdate" parameterType="owner">
+		UPDATE OWNERS SET BALANCE = BALANCE-#{balance} WHERE NAME=#{name}
+	</update>
+
+	<!-- 회원 관리 페이지 (user list) -->
+	<select id="ownerList" resultType="owner">
+		SELECT * FROM OWNERS
+	
+	</select>
+</mapper>

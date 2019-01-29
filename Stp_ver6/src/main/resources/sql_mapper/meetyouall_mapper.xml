@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Paking">
+	<!-- 가격 계산하기 위해서  -->
+	<select id="parkingInfo" parameterType="String" resultType="parking">
+		SELECT * FROM  MEETYOUALL_PARKING_INFO WHERE PRKPLCENO = #{parking_id}
+	</select>
+</mapper>
